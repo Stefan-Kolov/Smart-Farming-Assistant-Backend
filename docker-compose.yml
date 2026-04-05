@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  smart-farming-db:
+    image: postgres:17.4
+    container_name: smart_farming_db
+    restart: always
+    environment:
+      - POSTGRES_USER=sf_admin
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-sf_admin123}
+      - POSTGRES_DB=smart_farming_db
+    ports:
+      - "54324:5432"
+    volumes:
+      - smart_farming_data:/var/lib/postgresql/data
+    networks:
+      - smart_farming_net
+
+  smart-farming-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart_farming_app
+    depends_on:
+      - smart-farming-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://smart_farming_db:5432/smart_farming_db
+      - SPRING_DATASOURCE_USERNAME=sf_admin
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-sf_admin123}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+    ports:
+      - "8080:8080"
+    networks:
+      - smart_farming_net
+
+volumes:
+  smart_farming_data:
+
+networks:
+  smart_farming_net:
+    driver: bridge
