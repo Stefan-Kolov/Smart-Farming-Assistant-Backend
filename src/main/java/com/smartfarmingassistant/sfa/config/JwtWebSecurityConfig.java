@@ -78,7 +78,14 @@ public class JwtWebSecurityConfig {
 
                         .requestMatchers(
                                 "/api/user/register",
-                                "/api/user/login"
+                                "/api/user/login",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/error"
                         ).permitAll()
 
                         .requestMatchers(
