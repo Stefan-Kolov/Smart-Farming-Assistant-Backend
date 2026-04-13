@@ -28,4 +28,25 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidLocationException.class)
+    public ResponseEntity<String> handle(InvalidLocationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(LocationNotFoundException.class)
+    public ResponseEntity<String> handle(LocationNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(WeatherProviderException.class)
+    public ResponseEntity<String> handle(WeatherProviderException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(ex.getMessage());
+    }
 }
