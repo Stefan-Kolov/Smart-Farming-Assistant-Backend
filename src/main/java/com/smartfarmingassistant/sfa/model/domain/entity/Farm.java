@@ -1,5 +1,6 @@
-package com.example.smartfarming.entity;
+package com.smartfarmingassistant.sfa.model.domain.entity;
 
+import com.smartfarmingassistant.sfa.model.domain.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 

@@ -2,6 +2,8 @@ package com.smartfarmingassistant.sfa.service.domain;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.smartfarmingassistant.sfa.model.dto.WeatherData;
 import com.smartfarmingassistant.sfa.model.dto.weather.CurrentWeatherResponseDto;
 import com.smartfarmingassistant.sfa.model.dto.weather.GeocodingResultDto;
 

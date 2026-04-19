@@ -1,4 +1,4 @@
-package com.example.smartfarming.entity;
+package com.smartfarmingassistant.sfa.model.domain.entity;
 
 import com.example.smartfarming.enums.RiskLevel;
 import jakarta.persistence.*;

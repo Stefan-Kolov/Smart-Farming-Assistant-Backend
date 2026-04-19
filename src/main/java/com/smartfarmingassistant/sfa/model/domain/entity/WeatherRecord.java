@@ -1,4 +1,4 @@
-package com.example.smartfarming.entity;
+package com.smartfarmingassistant.sfa.model.domain.entity;
 
 import jakarta.persistence.*;
 

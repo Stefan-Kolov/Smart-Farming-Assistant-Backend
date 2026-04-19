@@ -1,7 +1,7 @@
+package com.smartfarmingassistant.sfa.repository;
 
-package com.example.smartfarming.repository;
-
+import com.smartfarmingassistant.sfa.model.domain.entity.Crop;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.smartfarming.entity.Crop;
+
 
 public interface CropRepository extends JpaRepository<Crop, Long> {}
