@@ -1,6 +1,6 @@
 package com.smartfarmingassistant.sfa.model.domain.entity;
 
-import com.example.smartfarming.enums.SoilType;
+import com.smartfarmingassistant.sfa.model.enums.SoilType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
