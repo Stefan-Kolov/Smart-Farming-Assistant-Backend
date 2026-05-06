@@ -1,5 +1,4 @@
-
-package com.example.smartfarming.enums;
+package com.smartfarmingassistant.sfa.model.enums;
 
 public enum RiskLevel {
     LOW, MEDIUM, HIGH

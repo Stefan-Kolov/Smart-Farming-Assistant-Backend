@@ -9,7 +9,10 @@ import java.util.*;
 
 @Service
 public class GroqService {
-    @Value("${groq.api.key}")
+    // TODO: Revert this default once GROQ key management is finalized for all environments.
+    // Keeping a default empty value allows the app to start without GROQ configured and lets
+    // RecommendationService fall back to rule-based recommendations.
+    @Value("${groq.api.key:}")
     private String groqApiKey;
 
     @Value("${groq.api.url:https://api.groq.com/openai/v1/chat/completions}")
@@ -22,6 +25,10 @@ public class GroqService {
 
     @SuppressWarnings("unchecked")
     public String getRecommendation(String crop, String soilType, WeatherData weather, String season) {
+        if (groqApiKey == null || groqApiKey.isBlank()) {
+            throw new IllegalStateException("GROQ API key is not configured (property 'groq.api.key').");
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(groqApiKey);

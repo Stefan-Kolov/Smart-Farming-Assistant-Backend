@@ -1,6 +1,6 @@
 package com.smartfarmingassistant.sfa.model.domain.entity;
 
-import com.example.smartfarming.enums.RiskLevel;
+import com.smartfarmingassistant.sfa.model.enums.RiskLevel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
