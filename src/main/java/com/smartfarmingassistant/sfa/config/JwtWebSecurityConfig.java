@@ -36,7 +36,8 @@ public class JwtWebSecurityConfig {
 
         cors.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "https://smart-farming-assistant-frontend.onrender.com"
         ));
 
         cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
