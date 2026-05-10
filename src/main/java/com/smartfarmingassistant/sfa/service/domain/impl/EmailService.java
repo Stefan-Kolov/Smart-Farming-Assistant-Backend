@@ -1,22 +1,32 @@
 package com.smartfarmingassistant.sfa.service.domain.impl;
 
-import lombok.RequiredArgsConstructor;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Message;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Properties;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
-
-    @Value("${spring.mail.username:}")
-    private String fromAddress;
+    @Value("${google.client.id}") private String clientId;
+    @Value("${google.client.secret}") private String clientSecret;
+    @Value("${google.refresh.token}") private String refreshToken;
+    @Value("${google.sender.email}") private String fromAddress;
 
     /**
      * Sends a risk alert email to the farm owner.
@@ -30,21 +40,45 @@ public class EmailService {
      */
     public void sendRiskAlert(String toEmail, String userName, String farmName,
                               String cropName, String riskType, String recommendation) {
-        if (fromAddress == null || fromAddress.isBlank()) {
-            log.warn("[EMAIL] MAIL_USERNAME not configured — skipping risk alert to {}", toEmail);
-            return;
-        }
-
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromAddress);
-            message.setTo(toEmail);
-            message.setSubject("⚠️ Smart Farming Alert: " + riskType + " Detected on " + farmName);
-            message.setText(buildEmailBody(userName, farmName, cropName, riskType, recommendation));
-            mailSender.send(message);
-            log.info("[EMAIL] Risk alert sent to {} for farm '{}' — {}", toEmail, farmName, riskType);
-        } catch (MailException e) {
-            log.error("[EMAIL] Failed to send risk alert to {}: {}", toEmail, e.getMessage());
+            JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+            NetHttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
+
+            TokenResponse tokenResponse = new TokenResponse().setRefreshToken(refreshToken);
+            GoogleCredential credential = new GoogleCredential.Builder()
+                    .setTransport(transport)
+                    .setJsonFactory(jsonFactory)
+                    .setClientSecrets(clientId, clientSecret)
+                    .build()
+                    .setFromTokenResponse(tokenResponse);
+
+            Gmail service = new Gmail.Builder(transport, jsonFactory, credential)
+                    .setApplicationName("SmartFarmingAssistant")
+                    .build();
+
+            Properties props = new Properties();
+            Session session = Session.getDefaultInstance(props, null);
+            MimeMessage email = new MimeMessage(session);
+            email.setFrom(new InternetAddress(fromAddress));
+            email.addRecipient(jakarta.mail.Message.RecipientType.TO, new InternetAddress(toEmail));
+            email.setSubject("⚠️ Smart Farming Alert: " + riskType + " on " + farmName);
+
+            String body = buildEmailBody(userName, farmName, cropName, riskType, recommendation);
+            email.setText(body);
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            email.writeTo(buffer);
+            byte[] bytes = buffer.toByteArray();
+            String encodedEmail = Base64.encodeBase64URLSafeString(bytes);
+
+            Message message = new Message();
+            message.setRaw(encodedEmail);
+
+            service.users().messages().send("me", message).execute();
+            log.info("[GMAIL API] Alert sent to {} for farm '{}'", toEmail, farmName);
+
+        } catch (Exception e) {
+            log.error("[GMAIL API] Failed to send email: {}", e.getMessage());
         }
     }
 
@@ -61,8 +95,7 @@ public class EmailService {
         sb.append("--- AI Recommendation ---\n\n");
         sb.append(recommendation).append("\n\n");
         sb.append("Please review your crops and take appropriate action as soon as possible.\n\n");
-        sb.append("Stay safe and farm well,\n");
-        sb.append("Smart Farming Assistant\n");
+        sb.append("Stay safe,\nSmart Farming Assistant\n");
         return sb.toString();
     }
 }
