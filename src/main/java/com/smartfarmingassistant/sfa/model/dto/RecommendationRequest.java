@@ -9,4 +9,6 @@ public class RecommendationRequest {
     private String crop;
     private String soilType;
     private String season;
+    private Long farmId;
+    private Long cropId;
 }

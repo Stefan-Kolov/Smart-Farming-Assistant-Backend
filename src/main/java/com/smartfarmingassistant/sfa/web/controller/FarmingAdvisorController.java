@@ -16,7 +16,11 @@ public class FarmingAdvisorController {
     @PostMapping("/recommend")
     public ResponseEntity<RecommendationResponse> recommend(@RequestBody RecommendationRequest req) {
         return ResponseEntity.ok(
-                recommendationService.generate(req.getLat(), req.getLon(), req.getCrop(), req.getSoilType(), req.getSeason())
+                recommendationService.generate(
+                        req.getLat(), req.getLon(),
+                        req.getCrop(), req.getSoilType(), req.getSeason(),
+                        req.getFarmId(), req.getCropId()
+                )
         );
     }
 }
