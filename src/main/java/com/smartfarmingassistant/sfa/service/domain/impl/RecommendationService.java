@@ -48,7 +48,7 @@ public class RecommendationService {
         } catch (Exception e) {
             log.warn("[FALLBACK] Groq failed: {}", e.getMessage());
             result.setSource("RULE_BASED");
-            result.setRecommendation(ruleBasedService.getRecommendation(crop, weather));
+            result.setRecommendation(ruleBasedService.getRecommendation(crop, weather, soilType, season));
             result.setNote("AI unavailable — fallback recommendation used.");
         }
 
