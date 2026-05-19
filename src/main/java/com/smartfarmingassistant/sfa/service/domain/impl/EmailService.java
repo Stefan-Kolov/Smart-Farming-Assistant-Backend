@@ -23,10 +23,10 @@ import java.util.Properties;
 @Service
 public class EmailService {
 
-    @Value("${google.client.id}") private String clientId;
-    @Value("${google.client.secret}") private String clientSecret;
-    @Value("${google.refresh.token}") private String refreshToken;
-    @Value("${google.sender.email}") private String fromAddress;
+    @Value("${google.client.id:}") private String clientId;
+    @Value("${google.client.secret:}") private String clientSecret;
+    @Value("${google.refresh.token:}") private String refreshToken;
+    @Value("${google.sender.email:}") private String fromAddress;
 
     /**
      * Sends a risk alert email to the farm owner.
@@ -40,6 +40,11 @@ public class EmailService {
      */
     public void sendRiskAlert(String toEmail, String userName, String farmName,
                               String cropName, String riskType, String recommendation) {
+        if (clientId.isBlank() || clientSecret.isBlank() || refreshToken.isBlank() || fromAddress.isBlank()) {
+            log.warn("[GMAIL API] Email alert skipped because Gmail configuration is incomplete.");
+            return;
+        }
+
         try {
             JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
             NetHttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();

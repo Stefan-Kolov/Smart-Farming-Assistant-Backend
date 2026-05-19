@@ -8,6 +8,8 @@ import com.smartfarmingassistant.sfa.model.dto.LoginUserRequestDto;
 import com.smartfarmingassistant.sfa.model.dto.LoginUserResponseDto;
 import com.smartfarmingassistant.sfa.model.dto.RegisterUserRequestDto;
 import com.smartfarmingassistant.sfa.model.dto.RegisterUserResponseDto;
+import com.smartfarmingassistant.sfa.model.dto.UpdateProfileRequestDto;
+import com.smartfarmingassistant.sfa.model.dto.UpdateProfileResponseDto;
 import com.smartfarmingassistant.sfa.service.application.UserApplicationService;
 import com.smartfarmingassistant.sfa.service.domain.UserService;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,13 @@ public class UserApplicationServiceImpl implements UserApplicationService {
         return userService
                 .findByUsername(username)
                 .map(RegisterUserResponseDto::from);
+    }
+
+    @Override
+    public Optional<UpdateProfileResponseDto> updateProfile(String username, UpdateProfileRequestDto updateProfileRequestDto) {
+        User user = userService.updateProfile(username, updateProfileRequestDto);
+        String token = jwtHelper.generateToken(user);
+        return Optional.of(UpdateProfileResponseDto.from(RegisterUserResponseDto.from(user), token));
     }
 }
 
