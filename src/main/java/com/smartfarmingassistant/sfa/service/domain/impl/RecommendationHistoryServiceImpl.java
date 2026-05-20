@@ -37,6 +37,19 @@ public class RecommendationHistoryServiceImpl implements RecommendationHistorySe
                 .toList();
     }
 
+    @Override
+    public RecommendationDto getById(User user, Long farmId, Long id) {
+        if (farmRepository.findByIdAndUser(farmId, user).isEmpty()) {
+            throw new ResourceNotFoundException("Farm not found");
+        }
+
+        Recommendation recommendation = recommendationRepository.findById(id)
+                .filter(r -> r.getFarm().getId().equals(farmId) && r.getFarm().getUser().equals(user))
+                .orElseThrow(() -> new ResourceNotFoundException("Recommendation not found"));
+
+        return toDto(recommendation);
+    }
+
     private RecommendationDto toDto(Recommendation recommendation) {
         return new RecommendationDto(
                 recommendation.getId(),
