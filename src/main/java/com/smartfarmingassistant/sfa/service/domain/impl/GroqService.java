@@ -38,10 +38,13 @@ public class GroqService {
             Give short, practical farming advice for:
             Crop: %s, Soil: %s, Season: %s
             Weather: %.1f°C, %.0f%% humidity, %.1fmm precipitation
-            Provide: Irrigation advice, Fertilization advice, Key risks.
+            Provide:     \s
+            1.Irrigation advice
+            2.Fertilization advice
+            3.Risk of pests and insects, drought, flood
             Be concise.""",
-                crop, soilType, season,
-                weather.getTemperature(), weather.getHumidity(), weather.getPrecipitation());
+                    crop, soilType, season,
+                    weather.getTemperature(), weather.getHumidity(), weather.getPrecipitation());
 
         Map<String, Object> body = new HashMap<>();
         body.put("model", model);
