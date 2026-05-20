@@ -32,6 +32,11 @@ public class FarmHistoryController {
         return recommendationHistoryService.listForFarm(user, farmId);
     }
 
+    @GetMapping("/recommendations/{id}")
+    public RecommendationDto recommendation(@AuthenticationPrincipal User user, @PathVariable Long farmId, @PathVariable Long id) {
+        return recommendationHistoryService.getById(user, farmId, id);
+    }
+
     @GetMapping("/weather-records")
     public List<WeatherRecordDto> weatherRecords(@AuthenticationPrincipal User user, @PathVariable Long farmId) {
         return weatherRecordHistoryService.listForFarm(user, farmId);
